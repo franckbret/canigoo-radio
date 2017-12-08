@@ -1,11 +1,10 @@
-# This file is a part of the AnyBlok / Pyramid / REST api project
+# This file is a part of the Canigoo radio project
 #
 #    Copyright (C) 2017 Franck Bret <franckbret@gmail.com>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-
 """Canigoo Radio Blok
 """
 from uuid import UUID
@@ -22,7 +21,7 @@ from .views.validators import check_basic_auth_credentials, RootAcl
 
 
 class Canigoo_radio(Blok):
-    """Canigoo_radio's Blok class definition
+    """Canigoo radio's Blok class definition
     """
     version = "0.1.0"
     author = "Franck Bret"

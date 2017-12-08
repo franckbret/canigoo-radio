@@ -16,6 +16,9 @@ from anyblok import Declarations
 from anyblok.column import (Integer, String, DateTime, Password, UUID)
 from anyblok.relationship import Many2One
 
+from .exception import EventOverlapException
+
+
 Mixin = Declarations.Mixin
 Model = Declarations.Model
 
@@ -31,7 +34,7 @@ class IdColumn:
 class UuidColumn:
     """ `UUID` id primary key mixin
     """
-    id = UUID(primary_key=True, default=uuid1, binary=False)
+    uuid = UUID(primary_key=True, default=uuid1, binary=False)
 
 
 @Declarations.register(Mixin)
@@ -148,12 +151,24 @@ class Event(UuidColumn, TrackModel):
         E = cls.registry.Event
         Q = E.query().filter(
                 or_(
-                    and_(E.start <= start, E.end >= end),
-                    and_(E.start <= end, E.end >= start)
+                    and_(E.start < start, E.end > end),
+                    and_(E.start < end, E.end > start)
                     )
                 ).order_by(
                     E.start.desc())
         return Q.count() and Q.all() or None
+
+    @classmethod
+    def insert(cls, *args, **kwargs):
+        """Overload insert method in order to raise on event creation if any
+        overlap with other events is detected
+        """
+        overlap = cls.overlap(start=kwargs['start'], end=kwargs['end'])
+        if overlap:
+            raise EventOverlapException(
+                """The event you want to create starting at %r and ending at %r
+                overlap with %r""" % (kwargs['start'], kwargs['end'], overlap))
+        return super(Event, cls).insert(*args, **kwargs)
 
     def __str__(self):
         return ('{self.name}').format(self=self)

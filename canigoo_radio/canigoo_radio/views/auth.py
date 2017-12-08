@@ -1,4 +1,4 @@
-# This file is a part of the AnyBlok / Pyramid / REST api project
+# This file is a part of the Canigoo radio project
 #
 #    Copyright (C) 2017 Franck Bret <franckbret@gmail.com>
 #
@@ -27,7 +27,6 @@ def forbidden_view(request):
         response = HTTPUnauthorized()
         response.headers.update(forget(request))
         response.json_body = dict(errors=request.errors)
-    # user is logged in but doesn't have permissions, reject wholesale
     else:
         request.errors.add(
                 'header',
@@ -38,7 +37,7 @@ def forbidden_view(request):
         response.json_body = dict(errors=request.errors)
     return response
 
-# TODO, better cors_policy + settings through configuration file
+
 cors_policy = dict(
         enabled=False,
         headers=(
@@ -91,7 +90,7 @@ def user_login_post(request):
         return
 
     if user and user.password == password:
-        return dict(id=str(user.id), username=username)
+        return dict(uuid=str(user.uuid), username=username)
     else:
         request.errors.add('header', 'password', 'wrong password')
         request.errors.status = 401

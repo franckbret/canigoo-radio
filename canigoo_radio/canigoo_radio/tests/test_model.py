@@ -8,11 +8,12 @@
 
 from anyblok.tests.testcase import BlokTestCase
 import datetime
+from ..exception import EventOverlapException
 from . import create_user, create_presenter, create_show, create_event
 
 
 class TestCanigooBlok(BlokTestCase):
-    """ Test User, Presenter, Show, Event models python api"""
+    """ Test User, Presenter, Show, Event models with python api"""
 
     def setUp(self):
         self.user = create_user(self)
@@ -75,20 +76,19 @@ class TestCanigooBlok(BlokTestCase):
         )
 
     def test_event_overlap(self):
-        create_event(
-            self,
-            start=self.event.start + datetime.timedelta(minutes=10),
-            end=self.event.end - datetime.timedelta(minutes=10),
-            name="FooEvent #2",
-            show=self.show)
-
-        self.assertEqual(self.registry.Event.query().count(), 2)
+        with self.assertRaises(EventOverlapException):
+            create_event(
+                self,
+                start=self.event.start + datetime.timedelta(minutes=10),
+                end=self.event.end - datetime.timedelta(minutes=10),
+                name="FooEvent #2",
+                show=self.show)
 
         self.assertEqual(
             len(self.registry.Event.overlap(
                 start=datetime.datetime.now() + datetime.timedelta(minutes=10),
                 end=datetime.datetime.now() + datetime.timedelta(minutes=40)
-                )), 2)
+                )), 1)
 
         self.assertEqual(
             len(self.registry.Event.overlap(

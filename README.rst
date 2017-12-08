@@ -2,11 +2,10 @@
 Canigoo radio
 =============
 
-The project that runs canigoo.com music radio
+The project that runs canigoo.com music radio [SOON]
 
 * Free software: Mozilla Public License Version 2.0
-* Documentation: https://canigoo-radio.readthedocs.io.
-
+* Documentation: https://canigoo-radio.readthedocs.io [NOT YET]
 
 Features
 --------

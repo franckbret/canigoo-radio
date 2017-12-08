@@ -1,12 +1,12 @@
-# This file is a part of the AnyBlok / Pyramid / REST api project
+# This file is a part of the Canigoo Radio project
 #
 #    Copyright (C) 2017 Franck Bret <franckbret@gmail.com>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file,You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-
 import base64
+import datetime
 
 from anyblok_pyramid.tests.testcase import PyramidBlokTestCase
 
@@ -103,20 +103,20 @@ class TestApiPresenter(PyramidBlokTestCase):
 
     def test_get_presenter_view(self):
         res = self.webserver.get(
-                '/api/v1/presenters/%s' % self.presenter.id,
+                '/api/v1/presenters/%s' % self.presenter.uuid,
                 headers=get_basic_auth_headers(
                     self.user.username, password='pop'))
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(res.json_body.get('id'), str(self.presenter.id))
+        self.assertEqual(res.json_body.get('uuid'), str(self.presenter.uuid))
         self.assertEqual(res.json_body.get('name'), self.presenter.name)
 
     def test_get_presenter_view_dschema(self):
         res = self.webserver.get(
-                '/api/v1/presenters/%s' % self.presenter.id,
+                '/api/v1/presenters/%s' % self.presenter.uuid,
                 headers=get_basic_auth_headers(
                     self.user.username, password='pop'))
         self.assertCountEqual(
-            list(res.json_body.keys()), ['id', 'shows', 'name'])
+            list(res.json_body.keys()), ['uuid', 'shows', 'name'])
 
     def test_get_presenters_view(self):
         res = self.webserver.get(
@@ -151,7 +151,7 @@ class TestApiPresenter(PyramidBlokTestCase):
 
     def test_delete_presenter_view(self):
         response = self.webserver.delete(
-                    '/api/v1/presenters/%s' % self.presenter.id,
+                    '/api/v1/presenters/%s' % self.presenter.uuid,
                     headers=get_basic_auth_headers('bob', password='pop'),
                     )
         self.assertEqual(response.status_code, 200)
@@ -175,20 +175,21 @@ class TestApiShow(PyramidBlokTestCase):
 
     def test_get_show_view(self):
         res = self.webserver.get(
-                '/api/v1/shows/%s' % self.show.id,
+                '/api/v1/shows/%s' % self.show.uuid,
                 headers=get_basic_auth_headers(
                     self.user.username, password='pop'))
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(res.json_body.get('id'), str(self.show.id))
+        self.assertEqual(res.json_body.get('uuid'), str(self.show.uuid))
         self.assertEqual(res.json_body.get('name'), self.show.name)
 
     def test_get_show_view_dschema(self):
         res = self.webserver.get(
-                '/api/v1/shows/%s' % self.show.id,
+                '/api/v1/shows/%s' % self.show.uuid,
                 headers=get_basic_auth_headers(
                     self.user.username, password='pop'))
-        self.assertCountEqual(
-            list(res.json_body.keys()), ['id', 'presenter', 'events', 'name'])
+        self.assertCountEqual(list(
+            res.json_body.keys()),
+            ['uuid', 'presenter', 'events', 'name'])
 
     def test_get_shows_view(self):
         res = self.webserver.get(
@@ -202,7 +203,7 @@ class TestApiShow(PyramidBlokTestCase):
         response = self.webserver.post_json(
                 '/api/v1/shows',
                 params={'name': 'GooGoo Radio Show',
-                        'presenter': '%s' % self.presenter.id},
+                        'presenter': '%s' % self.presenter.uuid},
                 headers=get_basic_auth_headers('bob', password='pop'),
             )
         self.assertEqual(response.status_code, 200)
@@ -224,7 +225,7 @@ class TestApiShow(PyramidBlokTestCase):
 
     def test_delete_show_view(self):
         response = self.webserver.delete(
-                    '/api/v1/shows/%s' % self.show.id,
+                    '/api/v1/shows/%s' % self.show.uuid,
                     headers=get_basic_auth_headers('bob', password='pop'),
                     )
         self.assertEqual(response.status_code, 200)
@@ -249,21 +250,21 @@ class TestApiEvent(PyramidBlokTestCase):
 
     def test_get_event_view(self):
         res = self.webserver.get(
-                '/api/v1/events/%s' % self.event.id,
+                '/api/v1/events/%s' % self.event.uuid,
                 headers=get_basic_auth_headers(
                     self.user.username, password='pop'))
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(res.json_body.get('id'), str(self.event.id))
+        self.assertEqual(res.json_body.get('uuid'), str(self.event.uuid))
         self.assertEqual(res.json_body.get('name'), self.event.name)
 
     def test_get_event_view_dschema(self):
         res = self.webserver.get(
-                '/api/v1/events/%s' % self.event.id,
+                '/api/v1/events/%s' % self.event.uuid,
                 headers=get_basic_auth_headers(
                     self.user.username, password='pop'))
         self.assertCountEqual(
             list(res.json_body.keys()),
-            ['id', 'show', 'name', 'created_at', 'edited_at',
+            ['uuid', 'show', 'name', 'created_at', 'edited_at',
              'start', 'end'])
 
     def test_get_events_view(self):
@@ -275,16 +276,21 @@ class TestApiEvent(PyramidBlokTestCase):
         self.assertEqual(len(res.json_body), 1)
 
     def test_post_event_view(self):
+        start = self.event.start + datetime.timedelta(hours=1)
+        end = start + datetime.timedelta(hours=1)
+
         response = self.webserver.post_json(
                 '/api/v1/events',
-                params={'name': 'GooGoo Radio Show #1',
-                        'show': '%s' % self.show.id},
+                params={'name': 'GooGoo Radio Show #2',
+                        'start': '%s' % start.isoformat(),
+                        'end': '%s' % end.isoformat(),
+                        'show': '%s' % self.show.uuid},
                 headers=get_basic_auth_headers('bob', password='pop'),
             )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json_body.get('name'),
-            "GooGoo Radio Show #1")
+            "GooGoo Radio Show #2")
 
     def test_post_bad_key_event_view(self):
         response = self.webserver.post_json(
@@ -302,7 +308,7 @@ class TestApiEvent(PyramidBlokTestCase):
 
     def test_delete_event_view(self):
         response = self.webserver.delete(
-                    '/api/v1/events/%s' % self.event.id,
+                    '/api/v1/events/%s' % self.event.uuid,
                     headers=get_basic_auth_headers('bob', password='pop'),
                     )
         self.assertEqual(response.status_code, 200)

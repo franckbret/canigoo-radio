@@ -16,7 +16,7 @@ help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 setup: ## install python project dependencies
-	pip install .
+	pip install -r requirements.txt
 	anyblok_createdb -c app.cfg || anyblok_updatedb -c app.cfg
 
 setup-tests: ## install python project dependencies for tests

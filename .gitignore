@@ -104,3 +104,6 @@ ENV/
 # travis
 travis/
 travis_pyramid/
+
+# Beets library files
+*.blb

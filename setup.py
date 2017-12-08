@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-"""Setup script for canigoo-radio"""
+"""Setup script for canigoo-radio project"""
 
 from setuptools import setup, find_packages
 import os
@@ -19,10 +18,11 @@ with open(os.path.join(here, 'VERSION'), 'r', encoding='utf-8') as version_file:
     version = version_file.read().strip()
 
 requirements = [
-    'anyblok',
     'passlib',
     'marshmallow',
     'psycopg2',
+    'beets',
+    'anyblok',
     'anyblok_pyramid',
     'pyramid_jinja2',
     'anyblok_pyramid_beaker',
@@ -42,9 +42,6 @@ setup(
     author_email='franckbret@gmail.com',
     url='https://github.com/franckbret/canigoo-radio',
     packages=find_packages(),
-    dependency_links = [
-        'https://github.com/AnyBlok/anyblok-pyramid-rest-api/tarball/master#egg=anyblok_pyramid_rest_api',
-    ],
     entry_points={
         'bloks': [
             'canigoo_radio=canigoo_radio.canigoo_radio:Canigoo_radio'
@@ -59,7 +56,6 @@ setup(
         'Intended Audience :: Developers',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
