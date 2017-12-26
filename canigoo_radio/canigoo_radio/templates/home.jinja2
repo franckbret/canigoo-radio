@@ -16,6 +16,10 @@
         </audio>
       </div>
       <div class="column">
+        <a href="http://canigoo.com:8000/canigoo.ogg" title="Listen to Canigoo Radio Station in Ogg Vorbis audio format">Ogg</a> - 
+        <a href="http://canigoo.com:8000/canigoo.mp3" title="Listen to Canigoo Radio Station in Mp3 audio format">Mp3</a> -
+        <a href="http://canigoo.com:8000/canigoo.ogg.m3u" title="Ogg playlist">Ogg / M3u</a> - 
+        <a href="http://canigoo.com:8000/canigoo.mp3.m3u" title="Mp3 playlist">Mp3 / M3u</a>
         <div id="trackinfo"></div>
       </div>
     </div>
@@ -40,7 +44,9 @@
     }
 
     function getData() {
-      return fetch(url).then(res => res.json()).catch(err => Promise.reject(err));
+      res = fetch(url).then(res => res.json()).catch(err => Promise.reject(err));
+      console.log(res)
+      return res
     }
 
     function displayData() {
@@ -50,8 +56,10 @@
           console.log("error fetching current track meta")
         } else {
           let track = data['meta']
-          document.getElementById('title').innerHTML = track['title'];
-          document.getElementById('artist').innerHTML = track['artist'];
+          if (track.hasOwnProperty('title')) {
+            document.getElementById('title').innerHTML = track['title'];
+            document.getElementById('artist').innerHTML = track['artist'];
+          }
         }
       });
     }
