@@ -31,8 +31,6 @@
 <script type="text/javascript">
   window.onload = function() {
     const player = document.getElementById('player'); // the player element
-    const stream_info = document.getElementById('streaminfo'); // the stream info element
-    const radio_info = document.getElementById('radioinfo'); // the radio info element
     const track_info = document.getElementById('trackinfo'); // the track info element
     const stream_url_ogg = document.getElementById('source-ogg').src += "?nocache=" + (+new Date).toString(36).slice(-5);
     const stream_url_mp3 = document.getElementById('source-mp3').src += "?nocache=" + (+new Date).toString(36).slice(-5);
@@ -52,25 +50,14 @@
 
     function displayData() {
       getData().then((data) => {
-        console.log("plop")
-        console.log(data)
-        console.log(data.hasOwnProperty('errors'))
         if (data.hasOwnProperty('errors')) {
           console.log("error fetching current track meta")
         } else {
-          let radio = data['icestats']
-          let track = radio['source']
-          let radio_ul = createNode('ul');
+          let track = data['meta']
           let track_ul = createNode('ul');
 
           document.getElementById('title').innerHTML = track['title'];
           document.getElementById('artist').innerHTML = track['artist'];
-
-          for(key in radio){
-            li = createNode('li');
-            li.innerHTML = key + " : " + radio[key];
-            append(radio_ul, li);
-          };
 
           for(key in track){
             li = createNode('li');
@@ -78,8 +65,6 @@
             append(track_ul, li);
           };
 
-          radio_info.innerHTML = "";
-          radio_info.append(radio_ul);
           track_info.innerHTML = "";
           track_info.append(track_ul);
         }

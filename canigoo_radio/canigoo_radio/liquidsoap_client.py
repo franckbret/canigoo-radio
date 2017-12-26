@@ -51,3 +51,15 @@ class LiquidsoapClient:
                         k, v = line.split(" : ")
                         data_dict[k] = v
             return data_dict or data
+
+    @staticmethod
+    def parse_metadatas(metadatas):
+        try:
+            return dict([(el[0], el[1][1:-1]) for el in [el.split('=') for el in metadatas.split('\n')]])
+        except IndexError:
+            retour = {}
+            for el in metadatas.split('\n'):
+                if '=' in el:
+                    sp = el.split('=')
+                    retour[sp[0]] = "=".join(el[1:])[1:-1]
+            return retour

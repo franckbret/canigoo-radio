@@ -150,15 +150,19 @@ def library_item_collection_get(request):
     return res
 
 
-on_air = Service(name='on_air', path='/api/v1/on-air', description="Liquidsoap metadata of the current track")
+on_air = Service(name='on_air',
+                 path='/api/v1/on-air',
+                 description="Liquidsoap metadata of the current track")
 
 
 @on_air.get()
 def on_air_get(request):
     sock = LiquidsoapClient()
     current = sock.send("request.on_air")
-    if not "error" in current.keys():
+    if type(current) == str():
         meta = sock.send('request.metadata %s' % current)
-        return dict(meta=meta) if meta else dict()
-    else:
+        return dict(meta=sock.parse_metadatas(meta)) if meta else dict()
+    elif type(current) == dict() and "error" in current.keys():
         request.errors.add('body', "liquidsoap socket connection failed")
+    else:
+        return dict()
