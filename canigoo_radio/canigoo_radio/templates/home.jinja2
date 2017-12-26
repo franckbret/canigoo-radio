@@ -1,0 +1,92 @@
+{% extends "main.jinja2" %}
+{% block header_title %}Listen - {{ title }}{% endblock %}
+{% block main_content %}
+<section class="section">
+  <div class="container">
+    <h1 id="event" class="is-size-1">{{ name }}</h1>
+    <h2 id="show" class="is-size-2">{{ show }}</h2>
+    <h3 id="presenter" class="is-size-3">{{ presenter }}</h2>
+    <div class="columns" id="streaminfo">
+      <div class="column">
+        <h3 id="artist"></h3>
+        <h4 id="title"></h4>
+        <audio controls="controls" preload="none" id="player">
+          <source src="http://canigoo.com:8000/canigoo.ogg" type="application/ogg" id="source-ogg"></source>
+          <source src="http://canigoo.com:8000/canigoo.mp3" type="audio/mp3" id="source-mp3"></source>
+        </audio>
+      </div>
+      <div class="column">
+        <div id="trackinfo"></div>
+      </div>
+      <div class="column">
+        <div id="radioinfo">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block bottom_script %}
+<script type="text/javascript">
+  window.onload = function() {
+    const player = document.getElementById('player'); // the player element
+    const stream_info = document.getElementById('streaminfo'); // the stream info element
+    const radio_info = document.getElementById('radioinfo'); // the radio info element
+    const track_info = document.getElementById('trackinfo'); // the track info element
+    const stream_url_ogg = document.getElementById('source-ogg').src += "?nocache=" + (+new Date).toString(36).slice(-5);
+    const stream_url_mp3 = document.getElementById('source-mp3').src += "?nocache=" + (+new Date).toString(36).slice(-5);
+    const url = 'api/v1/on-air';
+
+    function createNode(element) {
+      return document.createElement(element);
+    }
+
+    function append(parent, el) {
+      return parent.appendChild(el);
+    }
+
+    function getData() {
+      return fetch(url).then(res => res.json()).catch(err => Promise.reject(err));
+    }
+
+    function displayData() {
+      getData().then((data) => {
+        console.log("plop")
+        console.log(data)
+        console.log(data.hasOwnProperty('errors'))
+        if (data.hasOwnProperty('errors')) {
+          console.log("error fetching current track meta")
+        } else {
+          let radio = data['icestats']
+          let track = radio['source']
+          let radio_ul = createNode('ul');
+          let track_ul = createNode('ul');
+
+          document.getElementById('title').innerHTML = track['title'];
+          document.getElementById('artist').innerHTML = track['artist'];
+
+          for(key in radio){
+            li = createNode('li');
+            li.innerHTML = key + " : " + radio[key];
+            append(radio_ul, li);
+          };
+
+          for(key in track){
+            li = createNode('li');
+            li.innerHTML = key + " : " + track[key];
+            append(track_ul, li);
+          };
+
+          radio_info.innerHTML = "";
+          radio_info.append(radio_ul);
+          track_info.innerHTML = "";
+          track_info.append(track_ul);
+        }
+      });
+    }
+    displayData();
+    setInterval(displayData, 15000);
+  }
+</script>
+{% endblock %}

@@ -7,6 +7,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 """Canigoo Radio Blok
 """
+import os
 from uuid import UUID
 from datetime import datetime
 
@@ -68,7 +69,11 @@ class Canigoo_radio(Blok):
         json_renderer.add_adapter(datetime, datetime_adapter)
         config.add_renderer('json', json_renderer)
 
-        # Add json api base route
+        # radio homepage
+        config.add_route('homepage', '/')
+        config.add_static_view('static',
+                '%s/canigoo_radio/canigoo_radio/static/' % os.getcwd(), cache_max_age=3600)
+        # rest api / json
         config.add_route('canigoo_api_v1', '/api/v1/')
 
         # Scan available views

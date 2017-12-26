@@ -148,3 +148,17 @@ def library_item_collection_get(request):
     q = lib.items(search)
     res = [dict(item) for item in q.rows]
     return res
+
+
+on_air = Service(name='on_air', path='/api/v1/on-air', description="Liquidsoap metadata of the current track")
+
+
+@on_air.get()
+def on_air_get(request):
+    sock = LiquidsoapClient()
+    current = sock.send("request.on_air")
+    if not "error" in current.keys():
+        meta = sock.send('request.metadata %s' % current)
+        return dict(meta=meta) if meta else dict()
+    else:
+        request.errors.add('body', "liquidsoap socket connection failed")

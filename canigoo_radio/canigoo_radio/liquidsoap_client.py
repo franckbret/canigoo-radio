@@ -17,27 +17,37 @@ class LiquidsoapClient:
     """
 
     def send(self, cmd):
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        sock.connect("/tmp/liquidsoap.sock")
+
+        data = None
 
         try:
+            sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            sock.connect("/tmp/liquidsoap.sock")
             if type(cmd) != bytes:
                 cmd = str.encode(cmd + "\n")
             logger.info("sending : {!r}".format(cmd))
             sock.sendall(cmd)
             data = sock.recv(4096)
             logger.info("received : {!r}".format(data))
+        except:
+            error = dict(error=("liquidsoap socket error", "socket communication failed"))
+            logger.warn("socket error : {!r}".format(error))
+            return error
         finally:
             logger.info("closing socket")
             sock.close()
-            logger.info("socket")
-        data = str(
-            data.split(b"\r\nEND")[0], encoding='utf-8').lstrip().rstrip()
-        data_dict = dict()
-        if "\r\n" in data:
-            data = data.split("\r\n")
-            for line in data:
-                if " : " in line:
-                    k, v = line.split(" : ")
-                    data_dict[k] = v
-        return data_dict or data
+            logger.info("socket closed")
+
+        if not data:
+            return dict()
+        else:
+            data = str(
+                data.split(b"\r\nEND")[0], encoding='utf-8').lstrip().rstrip()
+            data_dict = dict()
+            if "\r\n" in data:
+                data = data.split("\r\n")
+                for line in data:
+                    if " : " in line:
+                        k, v = line.split(" : ")
+                        data_dict[k] = v
+            return data_dict or data

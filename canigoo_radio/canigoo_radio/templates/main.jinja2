@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/static/css/bulma.css"><link/>
+    <title>{% block header_title %}Canigoo Radio{% endblock %}</title>
+  </head>
+  <body>
+    <div class="container is-fluid">
+      <header id="header">
+        <nav class="navbar" role="navigation" aria-label="main navigation">
+          <div class="navbar-brand">
+            <a class="navbar-item" href="/" title="homepage">
+              <h1 class="is-size-3 has-text-weight-semibold" style="color:#000;">Canigoo</h1>
+            </a>
+          </div>
+        </nav>
+      </header>
+      {% block main_content %}
+      {% endblock%}
+      <footer class="hero" id="footer">
+        <div class="hero-foot has-text-centered">
+          <p>
+            <a href="http://canigoo.com" title="Visit canigoo.com"><strong>Canigoo Radio
+                Station</strong></a> - Hi-Fidelity Music From The Center Of The World!
+          </p>
+        </div>
+      </footer>
+    </div>
+    {% block bottom_script %}
+    <script>
+    </script> 
+    {% endblock %}
+  </body>
+</html>
