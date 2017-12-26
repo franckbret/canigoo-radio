@@ -8,8 +8,8 @@
     <h3 id="presenter" class="is-size-3">{{ presenter }}</h2>
     <div class="columns" id="streaminfo">
       <div class="column">
-        <h3 id="artist"></h3>
-        <h4 id="title"></h4>
+        <h3 id="artist" class="is-size-3"></h3>
+        <h4 id="title" class="is-size-3"></h4>
         <audio controls="controls" preload="none" id="player">
           <source src="http://canigoo.com:8000/canigoo.ogg" type="application/ogg" id="source-ogg"></source>
           <source src="http://canigoo.com:8000/canigoo.mp3" type="audio/mp3" id="source-mp3"></source>
@@ -17,10 +17,6 @@
       </div>
       <div class="column">
         <div id="trackinfo"></div>
-      </div>
-      <div class="column">
-        <div id="radioinfo">
-        </div>
       </div>
     </div>
   </div>
@@ -31,7 +27,6 @@
 <script type="text/javascript">
   window.onload = function() {
     const player = document.getElementById('player'); // the player element
-    const track_info = document.getElementById('trackinfo'); // the track info element
     const stream_url_ogg = document.getElementById('source-ogg').src += "?nocache=" + (+new Date).toString(36).slice(-5);
     const stream_url_mp3 = document.getElementById('source-mp3').src += "?nocache=" + (+new Date).toString(36).slice(-5);
     const url = 'api/v1/on-air';
@@ -50,23 +45,13 @@
 
     function displayData() {
       getData().then((data) => {
+          console.log(data)
         if (data.hasOwnProperty('errors')) {
           console.log("error fetching current track meta")
         } else {
           let track = data['meta']
-          let track_ul = createNode('ul');
-
           document.getElementById('title').innerHTML = track['title'];
           document.getElementById('artist').innerHTML = track['artist'];
-
-          for(key in track){
-            li = createNode('li');
-            li.innerHTML = key + " : " + track[key];
-            append(track_ul, li);
-          };
-
-          track_info.innerHTML = "";
-          track_info.append(track_ul);
         }
       });
     }
