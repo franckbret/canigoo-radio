@@ -6,22 +6,23 @@
     <h1 id="event" class="is-size-1">{{ name }}</h1>
     <h2 id="show" class="is-size-2">{{ show }}</h2>
     <h3 id="presenter" class="is-size-3">{{ presenter }}</h2>
-    <div class="columns" id="streaminfo">
-      <div class="column">
-        <h3 id="artist" class="is-size-3"></h3>
-        <h4 id="title" class="is-size-3"></h4>
-        <audio controls="controls" preload="none" id="player">
-          <source src="http://canigoo.com:8000/canigoo.ogg" type="application/ogg" id="source-ogg"></source>
-          <source src="http://canigoo.com:8000/canigoo.mp3" type="audio/mp3" id="source-mp3"></source>
-        </audio>
-      </div>
-      <div class="column">
-        <a href="http://canigoo.com:8000/canigoo.ogg" title="Listen to Canigoo Radio Station in Ogg Vorbis audio format">Ogg</a> - 
-        <a href="http://canigoo.com:8000/canigoo.mp3" title="Listen to Canigoo Radio Station in Mp3 audio format">Mp3</a> -
-        <a href="http://canigoo.com:8000/canigoo.ogg.m3u" title="Ogg playlist">Ogg / M3u</a> - 
-        <a href="http://canigoo.com:8000/canigoo.mp3.m3u" title="Mp3 playlist">Mp3 / M3u</a>
-        <div id="trackinfo"></div>
-      </div>
+    <div class="box">
+      <p class="has-text-info has-text-weight-semibold"><span id="on-air" class="is-size-4">Artist - Title</span></p>
+      <audio controls="controls" preload="none" id="player">
+        <source src="http://canigoo.com:8000/canigoo.ogg" type="application/ogg" id="source-ogg"></source>
+        <source src="http://canigoo.com:8000/canigoo.mp3" type="audio/mp3" id="source-mp3"></source>
+      </audio>
+      <h6>Alternate stream</h6>
+      <ul>
+        <li>
+          <a href="http://canigoo.com:8000/canigoo.ogg" title="Listen to Canigoo Radio Station in Ogg Vorbis audio format">Ogg</a> - 
+          <a href="http://canigoo.com:8000/canigoo.mp3" title="Listen to Canigoo Radio Station in Mp3 audio format">Mp3</a>
+        </li>
+        <li>
+          <a href="http://canigoo.com:8000/canigoo.ogg.m3u" title="Ogg playlist">Ogg / M3u</a> - 
+          <a href="http://canigoo.com:8000/canigoo.mp3.m3u" title="Mp3 playlist">Mp3 / M3u</a>
+        </li>
+      </ul>
     </div>
   </div>
 </section>
@@ -30,7 +31,6 @@
 {% block bottom_script %}
 <script type="text/javascript">
   window.onload = function() {
-    const player = document.getElementById('player'); // the player element
     const stream_url_ogg = document.getElementById('source-ogg').src += "?nocache=" + (+new Date).toString(36).slice(-5);
     const stream_url_mp3 = document.getElementById('source-mp3').src += "?nocache=" + (+new Date).toString(36).slice(-5);
     const url = 'api/v1/on-air';
@@ -45,20 +45,17 @@
 
     function getData() {
       res = fetch(url).then(res => res.json()).catch(err => Promise.reject(err));
-      console.log(res)
       return res
     }
 
     function displayData() {
       getData().then((data) => {
-          console.log(data)
         if (data.hasOwnProperty('errors')) {
           console.log("error fetching current track meta")
         } else {
           let track = data['meta']
           if (track.hasOwnProperty('title')) {
-            document.getElementById('title').innerHTML = track['title'];
-            document.getElementById('artist').innerHTML = track['artist'];
+            document.getElementById('on-air').innerHTML = track['artist'] + " - " + track['title'];
           }
         }
       });

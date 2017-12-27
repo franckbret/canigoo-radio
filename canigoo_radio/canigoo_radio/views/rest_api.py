@@ -159,7 +159,7 @@ on_air = Service(name='on_air',
 def on_air_get(request):
     sock = LiquidsoapClient()
     current = sock.send("request.on_air")
-    if type(current) == str():
+    if type(current) == str:
         meta = sock.send('request.metadata %s' % current)
         return dict(meta=sock.parse_metadatas(meta)) if meta else dict()
     elif type(current) == dict() and "error" in current.keys():
