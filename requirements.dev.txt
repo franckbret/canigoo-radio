@@ -3,4 +3,4 @@ ipdb
 ipdbplugin
 ipython
 -e git+https://github.com/AnyBlok/anyblok-pyramid-rest-api#egg=anyblok_pyramid_rest_api
-
+nodeenv

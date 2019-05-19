@@ -19,7 +19,6 @@ with open(os.path.join(here, 'VERSION'), 'r', encoding='utf-8') as version_file:
 
 requirements = [
     'passlib',
-    'marshmallow',
     'psycopg2',
     'beets',
     'anyblok',

@@ -22,16 +22,15 @@ from anyblok_pyramid_rest_api.crud_resource import (
 )
 from anyblok_pyramid_rest_api.validator import (
     base_validator,
-    model_schema_validator
 )
 
 from . validators import RootAcl
 from .. liquidsoap_client import LiquidsoapClient
 from .. schema import (
-    UserApiSchema,
-    PresenterApiSchema,
-    ShowApiSchema,
-    EventApiSchema
+    UserSchema,
+    PresenterSchema,
+    ShowSchema,
+    EventSchema
 )
 
 
@@ -40,42 +39,38 @@ _BEETS_DB = os.path.expanduser(Configuration.get('beets_db', "~/canigoo.db"))
 
 @resource(collection_path='/api/v1/users',
           path='/api/v1/users/{uuid}',
-          schema=UserApiSchema(),
           permission='authenticated',
-          validators=(model_schema_validator,),
           installed_blok=current_blok())
 class UserResource(CrudResource, RootAcl):
     model = 'Model.User'
+    default_schema = UserSchema
 
 
 @resource(collection_path='/api/v1/presenters',
           path='/api/v1/presenters/{uuid}',
-          schema=PresenterApiSchema(),
           permission='authenticated',
-          validators=(model_schema_validator,),
           installed_blok=current_blok())
 class PresenterResource(CrudResource, RootAcl):
     model = 'Model.Presenter'
+    default_schema = PresenterSchema
 
 
 @resource(collection_path='/api/v1/shows',
           path='/api/v1/shows/{uuid}',
-          schema=ShowApiSchema(),
           permission='authenticated',
-          validators=(model_schema_validator,),
           installed_blok=current_blok())
 class ShowResource(CrudResource, RootAcl):
     model = 'Model.Show'
+    default_schema = ShowSchema
 
 
 @resource(collection_path='/api/v1/events',
           path='/api/v1/events/{uuid}',
-          schema=EventApiSchema(),
           permission='authenticated',
-          validators=(model_schema_validator,),
           installed_blok=current_blok())
 class EventResource(CrudResource, RootAcl):
     model = 'Model.Event'
+    default_schema = EventSchema
 
 
 liquidsoap_client = Service(name='liquidsoap_client',
